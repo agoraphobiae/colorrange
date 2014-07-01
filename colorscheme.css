@@ -33,3 +33,23 @@ input {
 	display: inline-block;
 	margin: 0;
 }
+.swatch-hex {
+	display: block;
+	text-decoration: none;
+
+	text-align: center;
+	line-height: 50px;
+	font-size: 0.8em;
+	opacity: 0;
+	-webkit-transition: opacity 0.5s ease;
+	-moz-transition: opacity 0.5s ease;
+	-o-transition: opacity 0.5s ease;
+	transition: opacity 0.5s ease;
+}
+/* on hover, swatches show hexcode */
+.swatch-hex:hover {
+	opacity: 1;
+}
+.swatch-hex:hover {
+	opacity: 1;
+}

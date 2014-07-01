@@ -7,13 +7,19 @@ $(document).ready( function () {
 	}
 	function hexToRGBTriplet(hex) {
 		return [
-			Math.round(hex / 65536),
-			Math.round(hex / 256 % 256),
+			Math.floor(hex / 65536),
+			Math.floor(hex / 256 % 256),
 			hex % 256];
+	}
+	function RGBTripletToHex(rgb) {
+		return ("#" + rgb[0].toString(16) +
+			rgb[1].toString(16) +
+			rgb[2].toString(16)).toUpperCase();
 	}
 	function calculateColorRange(start, end, steps) {
 		start = hexToRGBTriplet(start);
 		end = hexToRGBTriplet(end);
+		if (steps > 100) steps = 100;
 
 		var output = [];
 		steps += 1;
@@ -39,7 +45,7 @@ $(document).ready( function () {
 			console.log("appending " + color + " as " + "rgb("+color[0]+","+color[1]+","+color[2]+")");
 			bar
 				.append(
-					$("<div></div>")
+					$('<div><a class="swatch-hex">'+RGBTripletToHex(color)+'</a></div>')
 						.addClass("swatch")
 						.css("background-color", "rgb("+color[0]+","+color[1]+","+color[2]+")")
 						.width(width + "%")
@@ -48,41 +54,50 @@ $(document).ready( function () {
 		});
 	}
 
+	// DRY: start and end have very similar functionality
+	// the me parameter identifies start vs endelem...
+	// definitely a better way to design this
+	function keyupEventHandler(startelem, endelem, me) {
+		console.log("keyup");
+		var start = validateHexCode(startelem.val());
+		var end = validateHexCode(endelem.val());
+		var steps = parseInt(startelem.siblings().closest(".color_steps").val());
+		console.log(start + " " + end + " " + steps);
+		if (!me) { // this is very not DRY
+			if( isNaN(end) || isNaN(steps)
+				|| startelem.data("lastGoodValue") == startelem.val()) return;
+			if (!isNaN(start)) {
+				console.log("updating " + startelem.val());
+				startelem.data({
+					lastGoodValue: startelem.val()
+				});
+			} else { return; }
+		} else if (me === "end") {
+			if( isNaN(start) || isNaN(steps)
+				|| endelem.data("lastGoodValue") == endelem.val()) return;
+			if (!isNaN(end)) {
+				console.log("updating " + endelem.val());
+				endelem.data({
+					lastGoodValue: endelem.val()
+				});
+			} else { return; }
+		}
+
+		console.log("making update call");
+		updateColorBar(startelem.siblings().closest(".colorbar"),
+			calculateColorRange(start, end, steps)
+		);
+	}
 
 	$(".color_start").keyup(function() {
-		console.log("keyup");
-		start = validateHexCode($(this).val());
-		end = validateHexCode($(this).next(".color_end").val());
-		steps = parseInt($(this).siblings().closest(".color_steps").val());
-		console.log(start + " " + end + " " + steps);
-		if (!isNaN(start)) {
-			console.log("updating " + $(this).val());
-			$(this).data({
-				lastGoodValue: $(this).val()
-			});
-		} else { return; }
-		if( isNaN(end) || isNaN(steps)
-			|| $(this).data("lastGoodValue") == $(this).val()) return;
-
-		updateColorBar($(this).siblings().closest(".colorbar"),
-			calculateColorRange(start, end, steps)
-		);
+		keyupEventHandler($(this), $(this).next(".color_end"));
 	});
 	$(".color_end").keyup(function() {
-		start = parseInt($(this).prev(".color_start").val().slice(1), 16);
-		end = parseInt($(this).val().slice(1), 16);
-		steps = parseInt($(this).siblings().closest(".color_steps").val());
-		if (!isNaN(end)) {
-			console.log("updating " + $(this).val());
-			$(this).data({
-				lastGoodValue: $(this).val()
-			});
-		} else { return; }
-		if( isNaN(start) || isNaN(steps) ) return;
-
-		updateColorBar($(this).siblings().closest(".colorbar"),
-			calculateColorRange(start, end, steps)
-		);
+		keyupEventHandler($(this).prev(".color_start"), $(this), "end");
+	});
+	$(".color_steps").focusout(function() {
+		keyupEventHandler($(this).siblings().closest(".color_start"),
+			$(this).siblings().closest(".color_end"), $(this));
 	});
 	function colorLostFocus(elem) {
 		console.log("replacing" + elem.val() + " with " + elem.data("lastGoodValue"));
@@ -95,6 +110,15 @@ $(document).ready( function () {
 		colorLostFocus($(this));
 	});
 
+	// initialize
 	$(".color_start").data({lastGoodValue: $(".color_start").val()});
 	$(".color_end").data({lastGoodValue: $(".color_end").val()});
+	updateColorBar($(".colorbar"), // this will be wonky if bare index has more than 1 bar
+		calculateColorRange(
+			validateHexCode($(".color_start").val()),
+			validateHexCode($(".color_end").val()),
+			parseInt($(".color_steps").val())
+		)
+	);
+
 });
