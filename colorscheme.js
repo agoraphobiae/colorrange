@@ -110,6 +110,21 @@ $(document).ready( function () {
 		colorLostFocus($(this));
 	});
 
+
+	var default_colors = [
+		["#F9F5C2", "#66D9EF"],
+		["#B8E7CB", "#D2304B"]
+	];
+	var i = 0;
+	$(".button-add").click( function() {
+		$(this).before(
+			'<div class="color_scheme"><input class="color_start" value="' + "#FFFFFF" + '"><input class="color_end" value="' + "#000000" + '"><input class="color_steps" value="5"><div class="colorbar"></div></div>'
+		);
+		i += 1;
+	});
+
+
+
 	// initialize
 	$(".color_start").data({lastGoodValue: $(".color_start").val()});
 	$(".color_end").data({lastGoodValue: $(".color_end").val()});
