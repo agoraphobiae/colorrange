@@ -89,13 +89,13 @@ $(document).ready( function () {
 		);
 	}
 
-	$(".color_start").keyup(function() {
+	$("#content").on("keyup", ".color_start", function() {
 		keyupEventHandler($(this), $(this).next(".color_end"));
 	});
-	$(".color_end").keyup(function() {
+	$("#content").on("keyup", ".color_end", function() {
 		keyupEventHandler($(this).prev(".color_start"), $(this), "end");
 	});
-	$(".color_steps").focusout(function() {
+	$("#content").on("focusout", ".color_steps", function() {
 		keyupEventHandler($(this).siblings().closest(".color_start"),
 			$(this).siblings().closest(".color_end"), $(this));
 	});
@@ -103,10 +103,10 @@ $(document).ready( function () {
 		console.log("replacing" + elem.val() + " with " + elem.data("lastGoodValue"));
 		elem.val( elem.data("lastGoodValue") );
 	}
-	$(".color_start").focusout( function() {
+	$("#content").on("focusout", ".color_start", function() {
 		colorLostFocus($(this));
 	});
-	$(".color_end").focusout( function() {
+	$("#content").on("focusout", ".color_end", function() {
 		colorLostFocus($(this));
 	});
 
@@ -118,7 +118,8 @@ $(document).ready( function () {
 	var i = 0;
 	$(".button-add").click( function() {
 		$(this).before(
-			'<div class="color_scheme"><input class="color_start" value="' + "#FFFFFF" + '"><input class="color_end" value="' + "#000000" + '"><input class="color_steps" value="5"><div class="colorbar"></div></div>'
+			$('<div class="color_scheme"><input class="color_start" value="' + "#FFFFFF" + '"><input class="color_end" value="' + "#000000" + '"><input class="color_steps" value="5"><div class="colorbar"></div></div>')
+				.animate({height: $(".color_scheme").height().toString()}, 200)
 		);
 		i += 1;
 	});
