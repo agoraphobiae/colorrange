@@ -1,8 +1,8 @@
-$(document).ready( function () {
+$(document).ready(function () {
 	function validateHexCode(hex) {
 		console.log("validate called with ", hex);
-		if (hex[0] === "#") hex = hex.slice(1);
-		if (hex.length != 6) return NaN;
+		if (hex[0] === "#") { hex = hex.slice(1); }
+		if (hex.length !== 6) { return NaN; }
 		return parseInt(hex, 16);
 	}
 	function hexToRGBTriplet(hex) {
@@ -19,14 +19,14 @@ $(document).ready( function () {
 	function calculateColorRange(start, end, steps) {
 		start = hexToRGBTriplet(start);
 		end = hexToRGBTriplet(end);
-		if (steps > 100) steps = 100;
+		if (steps > 100) { steps = 100; }
 
 		var output = [];
 		steps += 1;
 		console.log(steps);
 
 		// linear lol
-		for(var i = 0; i <= steps; i++) {
+		for (var i = 0; i <= steps; i++) {
 			output.push( [
 				Math.round(start[0] + i*((end[0] - start[0]) / steps)),
 				Math.round(start[1] + i*((end[1] - start[1]) / steps)),
