@@ -1,9 +1,13 @@
 $(document).ready(function () {
 	function validateHexCode(hex) {
-		console.log("validate called with ", hex);
-		if (hex[0] === "#") { hex = hex.slice(1); }
-		if (hex.length !== 6) { return NaN; }
-		return parseInt(hex, 16);
+		console.log(hex);
+		var validator = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+		if (validator.test(hex)) {
+			if (hex[0] === "#") { hex = hex.slice(1); }
+			return parseInt(hex, 16);
+		} else {
+			return NaN;
+		}
 	}
 	function hexToRGBTriplet(hex) {
 		return [
@@ -112,29 +116,41 @@ $(document).ready(function () {
 
 
 	var default_colors = [
+		["#FD971F", "#F92672"],
 		["#F9F5C2", "#66D9EF"],
-		["#B8E7CB", "#D2304B"]
+		["#B8E7CB", "#D2304B"],
+		["#FFFFFF", "#000000"]
 	];
 	var i = 0;
-	$(".button-add").click( function() {
-		$(this).before(
-			$('<div class="color_scheme"><input class="color_start" value="' + "#FFFFFF" + '"><input class="color_end" value="' + "#000000" + '"><input class="color_steps" value="5"><div class="colorbar"></div></div>')
-				.animate({height: $(".color_scheme").height().toString()}, 200)
+	function addColorScheme(addbutton) {
+		addbutton.before(
+			$('<div class="color_scheme"></div>')
+				.append($('<input class="color_start">')
+					.data({lastGoodValue: default_colors[i][0]})
+					.val(default_colors[i][0]))
+				.append($('<input class="color_end">')
+					.data({lastGoodValue: default_colors[i][1]})
+					.val(default_colors[i][1]))
+				.append($('<input class="color_steps" value="5"><div class="colorbar"></div>'))
+				.animate({height: "auto"}, 200)
 		);
-		i += 1;
+		i = 1+i < default_colors.length ? i + 1 : i;
+
+		var newscheme = addbutton.prev();
+		updateColorBar(newscheme.find(".colorbar"),
+			calculateColorRange(
+				validateHexCode(newscheme.find(".color_start").val()),
+				validateHexCode(newscheme.find(".color_end").val()),
+				parseInt(newscheme.find(".color_steps").val())
+			)
+		);
+	}
+
+	$(".button-add").click( function() {
+		addColorScheme($(this));
 	});
 
 
-
 	// initialize
-	$(".color_start").data({lastGoodValue: $(".color_start").val()});
-	$(".color_end").data({lastGoodValue: $(".color_end").val()});
-	updateColorBar($(".colorbar"), // this will be wonky if bare index has more than 1 bar
-		calculateColorRange(
-			validateHexCode($(".color_start").val()),
-			validateHexCode($(".color_end").val()),
-			parseInt($(".color_steps").val())
-		)
-	);
-
+	addColorScheme($(".button-add"));
 });
