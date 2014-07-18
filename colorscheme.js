@@ -45,16 +45,28 @@ $(document).ready(function () {
 		var width = 100 / colors.length;
 		console.log(bar);
 		bar.empty();
+		bar.siblings().closest(".color_array").val("");
 		colors.forEach( function(color) {
 			console.log("appending " + color + " as " + "rgb("+color[0]+","+color[1]+","+color[2]+")");
-			bar
-				.append(
-					$('<div><a class="swatch-hex">'+RGBTripletToHex(color)+'</a></div>')
-						.addClass("swatch")
-						.css("background-color", "rgb("+color[0]+","+color[1]+","+color[2]+")")
-						.width(width + "%")
-						.animate({height: "50px"}, 200)
-				);
+			bar.append(
+				$('<div><a class="swatch-hex">'+RGBTripletToHex(color)+'</a></div>')
+					.addClass("swatch")
+					.css("background-color", "rgb("+color[0]+","+color[1]+","+color[2]+")")
+					.width(width + "%")
+					.animate({height: "50px"}, 200)
+			);
+
+			bar.siblings().closest(".color_array").val(function (i, val) {
+				if (val === "") {
+					return '["' + RGBTripletToHex(color) + '"';
+				} else {
+					return val + ',"' + RGBTripletToHex(color) + '"';
+				}
+			});
+		});
+
+		bar.siblings().closest(".color_array").val(function (i, val) {
+			return val + "]";
 		});
 	}
 
@@ -131,7 +143,9 @@ $(document).ready(function () {
 				.append($('<input class="color_end">')
 					.data({lastGoodValue: default_colors[i][1]})
 					.val(default_colors[i][1]))
-				.append($('<input class="color_steps" value="5"><div class="colorbar"></div>'))
+				.append($('<input class="color_steps" value="5">'))
+				.append($('<input class="color_array" readonly>'))
+				.append($('<div class="colorbar"></div>'))
 				.animate({height: "auto"}, 200)
 		);
 		i = 1+i < default_colors.length ? i + 1 : i;

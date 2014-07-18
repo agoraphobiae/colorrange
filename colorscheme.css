@@ -25,9 +25,14 @@ input {
 .color_steps {
 	width: 30px;
 }
+.color_array {
+	position: absolute;
+	right: 10px;
+}
 
 .color_scheme {
 	margin-bottom: 10px;
+	position: relative;
 }
 .colorbar {
 	width: 100%;
