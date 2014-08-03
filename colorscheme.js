@@ -4,6 +4,7 @@ $(document).ready(function () {
 		var validator = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 		if (validator.test(hex)) {
 			if (hex[0] === "#") { hex = hex.slice(1); }
+			if (hex.length == 3) { hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]; }
 			return parseInt(hex, 16);
 		} else {
 			return NaN;
