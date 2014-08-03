@@ -15,10 +15,17 @@ $(document).ready(function () {
 			Math.floor(hex / 256 % 256),
 			hex % 256];
 	}
+	function tsZeroPad(i) {
+		i = i.toString(16);
+		if (i.length <= 1) {
+			i = "0" + i;
+		}
+		return i;
+	}
 	function RGBTripletToHex(rgb) {
-		return ("#" + rgb[0].toString(16) +
-			rgb[1].toString(16) +
-			rgb[2].toString(16)).toUpperCase();
+		return ("#" + tsZeroPad(rgb[0]) +
+			tsZeroPad(rgb[1]) +
+			tsZeroPad(rgb[2])).toUpperCase();
 	}
 	function calculateColorRange(start, end, steps) {
 		start = hexToRGBTriplet(start);
