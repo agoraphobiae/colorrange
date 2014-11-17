@@ -72,6 +72,7 @@ input {
 /* on hover, swatches show hexcode */
 .swatch-hex:hover {
 	opacity: 1;
+	color: inherit;
 }
 .swatch-hex:hover {
 	opacity: 1;
